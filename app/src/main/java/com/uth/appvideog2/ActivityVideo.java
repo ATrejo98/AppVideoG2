@@ -5,21 +5,19 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
-
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
-
 import android.widget.Toast;
 import android.widget.VideoView;
-
+import com.uth.appvideog2.db.DBHelper;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -31,18 +29,34 @@ public class ActivityVideo extends AppCompatActivity {
     static final int peticion_video = 102;
     static final int peticion_seleccionar_video = 104;
     VideoView videoView;
-    Button btnGrabar, btnAlmacenar, btnAlmacenamiento;
+    Button btnGrabar, btnAlmacenar, btnAlmacenamiento, btnDB;
+
     private Uri videoUri;
+    private DBHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
 
+        dbHelper = new DBHelper(this);
+
         videoView = (VideoView) findViewById(R.id.videoView);
         btnGrabar = (Button) findViewById(R.id.btnGrabar);
         btnAlmacenar = (Button) findViewById(R.id.btnAlmacenar);
         btnAlmacenamiento = findViewById(R.id.btnAlmacenamiento);
+        btnDB = (Button) findViewById(R.id.btnDB);
+
+
+        btnDB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(ActivityVideo.this, ActivityListaVideo.class);
+                startActivity(intent);
+
+            }
+        });
 
         btnGrabar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,6 +88,17 @@ public class ActivityVideo extends AppCompatActivity {
         videoView.setVideoURI(null);
         btnAlmacenar.setEnabled(false);
 
+
+        if (videoUri != null) {
+            long id = dbHelper.insertVideo(videoUri.toString());
+            if (id != -1) {
+                Toast.makeText(this, "Video guardado en SQLite", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Error al guardar el video en SQLite", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+
         try {
             AssetFileDescriptor videoAsset = getContentResolver().openAssetFileDescriptor(videoUri, "r");
             FileInputStream in = videoAsset.createInputStream();
@@ -84,9 +109,9 @@ public class ActivityVideo extends AppCompatActivity {
             while ((len = in.read(buf)) > 0) {
                 archivo.write(buf, 0, len);
             }
-            Toast.makeText(this, "Video guardado correctamente", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Video guardado correctamente en Almacenamiento local", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
-            Toast.makeText(this, "Problemas al guardar el video", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Problemas al guardar el video en el Almacenamiento local", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -148,9 +173,9 @@ public class ActivityVideo extends AppCompatActivity {
         }
     }
     private String crearNombreArchivoMP4() {
-
         String fecha = new SimpleDateFormat("yyyyMMss_HHmmss").format(new Date());
         String nombre = fecha + ".mp4";
         return nombre;
     }
+
 }
