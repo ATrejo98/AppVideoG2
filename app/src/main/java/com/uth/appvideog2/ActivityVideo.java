@@ -27,17 +27,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ActivityVideo extends AppCompatActivity {
-
     static final int peticion_camara = 100;
     static final int peticion_video = 102;
     static final int peticion_seleccionar_video = 104;
-
     VideoView videoView;
-
     Button btnGrabar, btnAlmacenar, btnAlmacenamiento;
-
     private Uri videoUri;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,12 +68,10 @@ public class ActivityVideo extends AppCompatActivity {
         btnAlmacenar.setEnabled(false);
 
     }
-
     private void guardarVideo() {
 
         videoView.stopPlayback();
         videoView.setVideoURI(null);
-
         btnAlmacenar.setEnabled(false);
 
         try {
@@ -110,8 +103,6 @@ public class ActivityVideo extends AppCompatActivity {
         } else {
             tomarVideo();
         }
-
-
     }
 
 
@@ -122,7 +113,6 @@ public class ActivityVideo extends AppCompatActivity {
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(intent, peticion_video);
         }
-
     }
 
     private void abrirAlmacenamiento() {
@@ -151,13 +141,9 @@ public class ActivityVideo extends AppCompatActivity {
         if (requestCode == peticion_video && resultCode == RESULT_OK) {
 
             this.videoUri = data.getData();
-
             videoView.setVideoURI(this.videoUri);
-
             videoView.start();
-
             btnAlmacenar.setEnabled(true);
-
 
         } else if (requestCode == peticion_seleccionar_video && resultCode == RESULT_OK) {
             Uri selectedVideoUri = data.getData();
@@ -165,7 +151,6 @@ public class ActivityVideo extends AppCompatActivity {
             videoView.start();
         }
     }
-
     private String crearNombreArchivoMP4() {
 
         String fecha = new SimpleDateFormat("yyyyMMss_HHmmss").format(new Date());
