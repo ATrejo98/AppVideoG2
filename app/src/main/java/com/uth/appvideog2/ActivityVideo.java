@@ -84,14 +84,11 @@ public class ActivityVideo extends AppCompatActivity {
             while ((len = in.read(buf)) > 0) {
                 archivo.write(buf, 0, len);
             }
-
-
             Toast.makeText(this, "Video guardado correctamente", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             Toast.makeText(this, "Problemas al guardar el video", Toast.LENGTH_SHORT).show();
         }
     }
-
 
     private void Permisos() {
 
@@ -104,7 +101,6 @@ public class ActivityVideo extends AppCompatActivity {
             tomarVideo();
         }
     }
-
 
     private void tomarVideo() {
 
